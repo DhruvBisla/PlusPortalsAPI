@@ -1,8 +1,8 @@
 import requests
 from lxml import html
 
-import credentials
-import info
+from . import credentials
+from . import info
 
 class Client():
     hasSetCredentials : bool = False

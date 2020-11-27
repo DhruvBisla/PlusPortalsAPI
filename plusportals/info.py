@@ -1,4 +1,3 @@
-import json
 from typing import Callable
 from urllib.parse import urljoin
 
