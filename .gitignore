@@ -1,5 +1,5 @@
-#  File to cache credentials
-/plusportals/credentials.json 
+#  Json file to cache credentials
+credentials.json 
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
