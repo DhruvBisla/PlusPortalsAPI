@@ -6,18 +6,19 @@ from . import credentials
 from . import info
 
 class Client():
+    __SCHOOL_NAME : str = None
+    __EMAIL : str = None
+    __ID : int = None
+    __PASSWORD : str = None
     hasSetCredentials : bool = os.path.isfile(os.path.join((os.path.dirname(__file__)), 'credentials.json'))
-    SCHOOL_NAME : str = None
-    EMAIL : str = None
-    ID : int = None
-    PASSWORD : str = None
+
     def __init__(self, *args):
         self.session : requests.Session = Client.createSession()
         None if Client.hasSetCredentials else Client.setCredentials(*args)
-        Client.SCHOOL_NAME = credentials.getCredential('schoolName')
-        Client.EMAIL = credentials.getCredential('email')
-        Client.ID = credentials.getCredential('ID')
-        Client.PASSWORD = credentials.getCredential('password')
+        Client.__SCHOOL_NAME = credentials.getCredential('schoolName')
+        Client.__EMAIL = credentials.getCredential('email')
+        Client.__ID = credentials.getCredential('ID')
+        Client.__PASSWORD = credentials.getCredential('password')
         
         self.hasGetLanding : bool = False
         self.hasLogin : bool = False
@@ -37,32 +38,31 @@ class Client():
         return requests.Session()
 
     def getLanding(self) -> None:
-        response = self.session.get(info.LANDING_LOGIN(Client.SCHOOL_NAME))
+        response = self.session.get(info.LANDING_LOGIN(Client.__SCHOOL_NAME))
         self.hasGetLanding = True
    
     def login(self) -> None:
         None if self.hasGetLanding else self.getLanding()
-        Data = [
-            ('UserName', Client.EMAIL),
-            ('Password', Client.PASSWORD),
+        data = [
+            ('UserName', Client.__EMAIL),
+            ('Password', Client.__PASSWORD),
             ('RememberMe', 'true'),
             ('btnsumit', 'Sign In'),
         ]
         specHeaders = {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'cookie': '__cfduid={}; ppschoollink={}; UGUID={}; __RequestVerificationToken={}; _pps=-480'.format(self.session.cookies.get_dict().get("__cfduid"), Client.SCHOOL_NAME, self.session.cookies.get_dict().get("UGUID"), self.session.cookies.get_dict().get("__RequestVerificationToken"))
+            'cookie': '__cfduid={}; ppschoollink={}; UGUID={}; __RequestVerificationToken={}; _pps=-480'.format(self.session.cookies.get_dict().get("__cfduid"), Client.__SCHOOL_NAME, self.session.cookies.get_dict().get("UGUID"), self.session.cookies.get_dict().get("__RequestVerificationToken"))
         }
-        response = self.session.post(info.LANDING_LOGIN(Client.SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders))
-        print(response.content)
+        response = self.session.post(info.LANDING_LOGIN(Client.__SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders), data=data)
         self.hasLogin = True
 
 
     def getDetails(self) -> None:
         None if self.hasLogin else self.login()
         specHeaders = {
-            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption=RecentEmails; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client.SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
+            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption=RecentEmails; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client.__SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
         }
-        response = self.session.post(info.DETAILS(Client.SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders))
+        response = self.session.post(info.DETAILS(Client.__SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders))
         tree = html.fromstring(response.text)
         try:
             self.requestVerificationToken = tree.xpath("/html/body/input/@value")[0]
@@ -74,9 +74,9 @@ class Client():
     def getMarkingPeriod(self) -> None:
         None if self.hasGetMarkingPeriod else self.getDetails()
         specHeaders = {
-            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client.SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
+            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client.__SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
         }
-        response = self.session.post(info.DETAILS(Client.SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders))
+        response = self.session.post(info.DETAILS(Client.__SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders))
         try:
             markingDict = response.json()
             for period in markingDict:

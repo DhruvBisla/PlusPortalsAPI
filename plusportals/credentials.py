@@ -8,7 +8,7 @@ def setCredentials(schoolName: str, email: str, ID: int, password: str) -> None:
         json.dump(credentials, f)
 
 def getCredential(key: str):
-    with open("credentials.json", "r") as f:
+    with open(os.path.join(os.path.dirname(__file__), 'credentials.json'), "r") as f:
         credentials : dict = json.load(f)
     try:
         return credentials[key]
