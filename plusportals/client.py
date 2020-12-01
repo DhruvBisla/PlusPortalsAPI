@@ -28,6 +28,7 @@ class Client():
         self.requestVerificationToken : str = None
 
         self.markPeriods : list[int] = []
+        self.grades = 
 
     @classmethod
     def setCredentials(cls, schoolName: str, email: str, ID: int, password: str) -> None:
@@ -88,7 +89,7 @@ class Client():
             raise Exception("Invalid marking period response returned: {}".format(error))
         self.hasGetMarkingPeriod = True
     
-    def getGrades(self, markingPeriod):
+    def getGrades(self, markingPeriod: int) -> None:
         None if self.hasGetMarkingPeriod else self.getMarkingPeriod()
         specHeaders = {
             '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
@@ -96,3 +97,6 @@ class Client():
         }
         response = self.session.post(info.GRADES(self.markPeriods[markingPeriod-1]), headers=dict(info.BASE_HEADERS, **specHeaders))
         return response.content
+    
+    def getGrade():
+        return 
