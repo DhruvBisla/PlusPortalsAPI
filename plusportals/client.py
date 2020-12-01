@@ -1,6 +1,7 @@
 import requests
 from lxml import html
 import os
+import json
 
 from . import credentials
 from . import info
@@ -26,7 +27,7 @@ class Client():
         self.hasGetMarkingPeriod : bool = False
         self.requestVerificationToken : str = None
 
-        self.markPeriods : list[int] = [0,0]
+        self.markPeriods : list[int] = []
 
     @classmethod
     def setCredentials(cls, schoolName: str, email: str, ID: int, password: str) -> None:
@@ -72,19 +73,26 @@ class Client():
             self.hasGetDetails = True
     
     def getMarkingPeriod(self) -> None:
-        None if self.hasGetMarkingPeriod else self.getDetails()
+        None if self.hasGetDetails else self.getDetails()
         specHeaders = {
+            '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
             'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client.__SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
         }
-        response = self.session.post(info.DETAILS(Client.__SCHOOL_NAME), headers=dict(info.BASE_HEADERS, **specHeaders))
+        response = self.session.post(info.MARKING_PERIOD, headers=dict(info.BASE_HEADERS, **specHeaders))
         try:
-            markingDict = response.json()
+            markingDict = json.loads(response.content.decode('utf-8'))
             for period in markingDict:
                 self.markPeriods.append(period["MarkingPeriodId"])
-                self.markPeriods = self.markPeriods[1:]
+            self.markPeriods = self.markPeriods[1:]
         except Exception as error:
             raise Exception("Invalid marking period response returned: {}".format(error))
-        self.hasGetMarkingPeriod
+        self.hasGetMarkingPeriod = True
     
-    def getGrades(self):
-        pass
+    def getGrades(self, markingPeriod):
+        None if self.hasGetMarkingPeriod else self.getMarkingPeriod()
+        specHeaders = {
+            '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
+            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client.__SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
+        }
+        response = self.session.post(info.GRADES(self.markPeriods[markingPeriod-1]), headers=dict(info.BASE_HEADERS, **specHeaders))
+        return response.content

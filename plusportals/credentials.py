@@ -14,3 +14,10 @@ def getCredential(key: str):
         return credentials[key]
     except KeyError:
         raise Exception("Invalid key.")
+
+def updateCredentials(**kwargs):
+    pass
+
+def clearCredentials(**kwargs):
+    pass
+

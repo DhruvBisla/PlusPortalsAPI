@@ -5,7 +5,7 @@ BASE = 'https://plusportals.com/'
 LANDING_LOGIN: Callable[[str], str] = lambda SCHOOL_NAME : urljoin(BASE, SCHOOL_NAME) 
 DETAILS : Callable[[str], str] = lambda SCHOOL_NAME : urljoin(BASE, 'ParentStudentDetails/{}'.format(SCHOOL_NAME))
 MARKING_PERIOD = urljoin(BASE,'ParentStudentDetails/GetMarkingPeriod')
-GRADES = urljoin(BASE, 'ShowGridProgressInfo')
+GRADES : Callable[[int], str] = lambda MARKING_PERIOD : urljoin(BASE, 'ParentStudentDetails/ShowGridProgressInfo?markingPeriodId={}&isGroup=false'.format(MARKING_PERIOD))
 
 
 BASE_HEADERS = {
