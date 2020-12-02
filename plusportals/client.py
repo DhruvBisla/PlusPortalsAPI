@@ -2,6 +2,7 @@ import requests
 from lxml import html
 import os
 import json
+from typing import Callable
 
 from . import credentials
 from . import info
@@ -28,7 +29,6 @@ class Client():
         self.requestVerificationToken : str = None
 
         self.markPeriods : list[int] = []
-        self.grades = 
 
     @classmethod
     def setCredentials(cls, schoolName: str, email: str, ID: int, password: str) -> None:
@@ -38,6 +38,12 @@ class Client():
     @staticmethod
     def createSession():
         return requests.Session()
+
+    def require(func: Callable, required: list, modifyVal: list):
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        modifyVal[0] = True
+        return wrapper
 
     def getLanding(self) -> None:
         response = self.session.get(info.LANDING_LOGIN(Client.__SCHOOL_NAME))
@@ -98,4 +104,4 @@ class Client():
         response = self.session.post(info.GRADES(self.markPeriods[markingPeriod-1]), headers=dict(info.BASE_HEADERS, **specHeaders))
     
     def getGrade():
-        
+        pass
