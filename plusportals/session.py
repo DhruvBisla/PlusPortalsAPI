@@ -1,14 +1,14 @@
 import requests
 from lxml import html
-import os
 import json
-from typing import Callable, Optional
+from typing import List
 
 from . import credentials
 from . import info
 
 class Session():
     def __init__(self, schoolName, email, password):
+        self.createSession()
         self.__schoolName : str = schoolName
         self.__email : str = email
         self.__password : str = password
@@ -19,8 +19,8 @@ class Session():
         self.hasGetMarkingPeriod : bool = False
         self.requestVerificationToken : str = None
         
-    def newSession(self) -> None:
-        self.Session : requests.Session = requests.Session()
+    def createSession(self) -> None:
+        self.session : requests.Session = requests.Session()
 
     def getLanding(self) -> None:
         response = self.session.get(info.LANDING_LOGIN(self.__schoolName))
@@ -55,21 +55,20 @@ class Session():
         finally:
             self.hasGetDetails = True
 
-    def getMarkingPeriods(self) -> list[int]:
+    def getMarkingPeriods(self) -> List[int]:
         None if self.hasGetDetails else self.getDetails()
         specHeaders = {
             '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
-            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client._SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
+            'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), self.__schoolName, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
         }
         response = self.session.post(info.MARKING_PERIOD, headers=dict(info.BASE_HEADERS, **specHeaders))
+        markingPeriods : List[int] = []
         try:
             markingDict = json.loads(response.content.decode('utf-8'))
-            markingPeriods : list[int] = []
             for period in markingDict:
                 markingPeriods.append(period["MarkingPeriodId"])
-            Client.markPeriods = markingPeriods[1:]
+            markingPeriods = markingPeriods[1:]
         except Exception as error:
             raise Exception("Invalid marking period response returned: {}".format(error))
         finally:
             return markingPeriods
-        
