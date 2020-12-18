@@ -50,6 +50,7 @@ class Session():
         }
         response = self.session.post(info.DETAILS(self.__schoolName), headers=dict(info.BASE_HEADERS, **specHeaders))
         tree = html.fromstring(response.text)
+        
         try:
             self.requestVerificationToken = tree.xpath("/html/body/input/@value")[0]
         except Exception as error:
