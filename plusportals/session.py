@@ -22,11 +22,12 @@ class Session():
     def createSession(self) -> None:
         self.session : requests.Session = requests.Session()
 
-    def getLanding(self) -> None:
+    def getLanding(self) -> requests.Response:
         response = self.session.get(info.LANDING_LOGIN(self.__schoolName))
         self.hasGetLanding = True
+        return response
 
-    def login(self) -> None:
+    def login(self) -> requests.Response:
         None if self.hasGetLanding else self.getLanding()
         data = [
             ('UserName', self.__email),
@@ -40,8 +41,9 @@ class Session():
         }
         response = self.session.post(info.LANDING_LOGIN(self.__schoolName), headers=dict(info.BASE_HEADERS, **specHeaders), data=data)
         self.hasLogin = True
+        return response
 
-    def getDetails(self) -> None:
+    def getDetails(self) -> requests.Response:
         None if self.hasLogin else self.login()
         specHeaders = {
             'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption=RecentEmails; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), self.__schoolName, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
@@ -54,6 +56,7 @@ class Session():
             raise Exception("Login was not successful")
         finally:
             self.hasGetDetails = True
+            return response
 
     def getMarkingPeriods(self) -> List[int]:
         None if self.hasGetDetails else self.getDetails()
