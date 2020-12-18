@@ -1,8 +1,7 @@
-import requests
-from lxml import html
 import os
 import json
-from typing import Callable, Optional
+import requests
+from typing import Optional
 
 from . import credentials
 from . import info
@@ -34,14 +33,14 @@ class Client(session.Session):
     
     def reset(self) -> None:
         self.session.cookies.clear()
-        self.getMarkingPeriods()
+        self.getDetails()
 
     @classmethod
     def setCredentials(cls, schoolName: str, email: str, ID: int, password: str) -> None:
         credentials.setCredentials(schoolName, email, ID, password)
         Client.hasCachedCredentials = True
     
-    def getGrades(self, markingPeriod: int) -> None:
+    def getGrades(self, markingPeriod: int) -> requests.Response:
         None if (Client.markingPeriods is not None) else self.getMarkingPeriods()
         specHeaders = {
             '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
@@ -49,3 +48,4 @@ class Client(session.Session):
         }
         response = self.session.post(info.GRADES(self.markingPeriods[markingPeriod-1]), headers=dict(info.BASE_HEADERS, **specHeaders))
         self.grades = json.loads(response.content.decode('utf-8'))
+        return response
