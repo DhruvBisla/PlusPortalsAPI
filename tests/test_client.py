@@ -4,7 +4,7 @@ import os
 class TestClient:
     @classmethod
     def instantiateClient(cls, cacheCredentials):
-        return pp.Client(cacheCredentials, os.environ['schoolName'], os.environ['email'], os.environ['password'])
+        return pp.Client(cacheCredentials, os.environ['schoolName'], os.environ['email'], os.environ['ID'], os.environ['password'])
     
     def test_init(self):
         client = TestClient.instantiateClient(False)
