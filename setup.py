@@ -29,7 +29,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    requires = ['lxml'],
-    install_requires=['lxml'],
+    requires = ['requests','lxml'],
+    install_requires=['requests','lxml'],
     zip_safe=False,
 )
