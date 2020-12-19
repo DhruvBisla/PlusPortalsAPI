@@ -54,8 +54,8 @@ class Client(session.Session):
         self.grades = json.loads(response.content.decode('utf-8'))
         self.hasGetGrades = True
         return response
-        
-    def prettyPrintGrades(self):
-        None if (self.hasGetGrades) else self.getMarkingPeriods()
+
+    def prettyPrintGrades(self, markingPeriod):
+        None if (self.hasGetGrades) else self.getGrades(markingPeriod)
         for i in self.grades["Data"]:
             print("{}'s grade is {}".format(i.get("CourseName")[:(len(i.get("CourseName")))-12],i.get("Average")))
