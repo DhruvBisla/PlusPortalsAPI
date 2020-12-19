@@ -38,11 +38,21 @@ class TestSession:
         assert(session.requestVerificationToken is not None)
 
     def test_getMarkingPeriods(self):
+        keys = []
         session = TestSession.instantiateSession()
         response = session.getMarkingPeriods()
+        for key, value in session.session.cookies.get_dict().items():
+            keys.append(key)
         assert(session.hasGetLanding == True)
         assert(session.hasLogin == True)
         assert(session.hasGetDetails == True)
-        assert(len(session.session.cookies.get_dict()) == 8)
+        assert('__cfduid' in keys)
+        assert('.ASPXAUTH' in keys)
+        assert('ASP.NET_SessionId' in keys)
+        assert('UGUID' in keys)
+        assert('__RequestVerificationToken' in keys)
+        assert('emailoption' in keys)
+        assert('ppschoollink' in keys)
+        assert('ppusername' in keys)
         assert(session.requestVerificationToken is not None)
         assert(len(response) == 2)
