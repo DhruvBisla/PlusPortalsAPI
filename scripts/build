@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+set -x
+
 python -m pip install setuptools wheel twine
 python setup.py sdist bdist_wheel
 twine check dist/*
