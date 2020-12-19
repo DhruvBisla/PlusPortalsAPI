@@ -1,6 +1,4 @@
 #!/bin/sh -e
 
-set -x
-
 python -m pip install pytest pytest-dotenv
 python -m pytest
