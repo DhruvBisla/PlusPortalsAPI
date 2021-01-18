@@ -15,20 +15,21 @@ A reverse-engineered PlusPortals API that provides some basic functionality to a
 Python 3.6+
 
 # Installation
-
-'''shell
+```shell
 pip install plusportals
-'''
+```
 
 # Usage
 
-'''python
+```python
 import plusportals as pp
 client = pp.Client(True, School, Email, ID, Password)
 client.printGrades(markingPeriod)
-'''
+```
 
-The following imports the plusportals module, instantiates a client with your login credentials. The first parameter passed is whether you want your credentials to be cached so that they do not have to be passed again after the first time, in which case you may simply instantiate a client with 'client = pp.Client()'. The following parameters are your PlusPortals login credentials, school name, email, ID, and password. Your ID is the multi-digit number found in the URL when you login to Plusportals.
+The following imports the plusportals module, instantiates a client with your login credentials, and prints your grades of the specified markingPeriod. 
 
-Finally, you can print the grades for each of your classes as is done in the last line where markingPeriod is the markingPeriod for which you would like to view your grades e.g. 1 for Semester 1 and 2 for Semester 2.
+The first parameter passed is whether you would like your credentials to be cached so that they do not have to be passed again after the first time, in which case you may simply instantiate a client with `client = pp.Client()`. The following parameters are your PlusPortals login credentials, school name, email, ID, and password. Your ID is the multi-digit number found in the URL when you login to Plusportals.
+
+Finally, you can print the grades for each of your classes, as is done in the last line, where markingPeriod is the markingPeriod for which you would like to view your grades, e.g., 1 for Semester 1 and 2 for Semester 2.
 
