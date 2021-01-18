@@ -19,6 +19,7 @@ class TestClient:
     
     def test_getGrades(self):
         client = TestClient.instantiateClient(False)
-        response = client.getGrades(1)
-        assert(response.status_code == 200)
-        assert(len(client.grades) == 4)
+        response = client.getGrades()
+        assert(response == [200, 200])
+        assert(len(client.grades) == len(client.markingPeriods))
+    

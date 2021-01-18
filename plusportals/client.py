@@ -30,8 +30,8 @@ class Client(session.Session):
         super().__init__(Client._SCHOOL_NAME, Client._EMAIL, Client._PASSWORD)
         Client.markingPeriods = self.getMarkingPeriods()
         self.hasGetGrades : bool = False
-        self.grades : dict = {}
-    
+        self._grades : list[dict] = []
+
     def reset(self) -> None:
         self.session.cookies.clear()
         self.getDetails()
@@ -41,21 +41,27 @@ class Client(session.Session):
         credentials.setCredentials(schoolName, email, ID, password)
         Client.hasCachedCredentials = True
     
-    def getGrades(self, markingPeriod: int) -> requests.Response:
+    def getGrades(self) -> requests.Response:
         None if (Client.markingPeriods is not None) else self.getMarkingPeriods()
         specHeaders = {
             '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
             'cookie': '__cfduid={}; ppschoollink={}; __RequestVerificationToken={}; _pps=-480; ASP.NET_SessionId={}; emailoption={}; UGUID={}; ppusername={}; .ASPXAUTH={}'.format(self.session.cookies.get_dict().get('__cfduid'), Client._SCHOOL_NAME, self.session.cookies.get_dict().get('__RequestVerificationToken'), self.session.cookies.get_dict().get('ASP.NET_SessionId'), self.session.cookies.get_dict().get('emailoption'), self.session.cookies.get_dict().get('UGUID'), self.session.cookies.get_dict().get('ppusername'), self.session.cookies.get_dict().get('.ASPXAUTH'))
         }
         try:
-            response = self.session.post(info.GRADES(self.markingPeriods[markingPeriod-1]), headers=dict(info.BASE_HEADERS, **specHeaders))
+            agrades : list[dict] = []
+            responses : list[requests.Response.status_code] = []
+            for i in range(len(Client.markingPeriods)):
+                response = (self.session.post(info.GRADES(self.markingPeriods[i]), headers=dict(info.BASE_HEADERS, **specHeaders)))
+                agrades.append(json.loads(response.content.decode('utf-8')))
+                responses.append(response.status_code)
         except:
             print("Information provided was incorrect; Login was not successful.")
-        self.grades = json.loads(response.content.decode('utf-8'))
+        self._grades = agrades
         self.hasGetGrades = True
-        return response
+        return responses
 
-    def prettyPrintGrades(self, markingPeriod):
-        None if (self.hasGetGrades) else self.getGrades(markingPeriod)
-        for i in self.grades["Data"]:
+    def printGrades(self, markingPeriod : int) -> None:
+        None if (self.hasGetGrades) else self.getGrades()
+        mgrades = self._grades[markingPeriod-1]
+        for i in mgrades["Data"]:
             print("{}'s grade is {}".format(i.get("CourseName")[:(len(i.get("CourseName")))-12],i.get("Average")))
