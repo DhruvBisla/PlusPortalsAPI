@@ -30,7 +30,7 @@ class Client(session.Session):
         super().__init__(Client._SCHOOL_NAME, Client._EMAIL, Client._PASSWORD)
         Client.markingPeriods = self.getMarkingPeriods()
         self.hasGetGrades : bool = False
-        self._grades : list[dict] = []
+        self.grades : list[dict] = []
 
     def reset(self) -> None:
         self.session.cookies.clear()
@@ -56,12 +56,12 @@ class Client(session.Session):
                 responses.append(response.status_code)
         except:
             print("Information provided was incorrect; Login was not successful.")
-        self._grades = agrades
+        self.grades = agrades
         self.hasGetGrades = True
         return responses
 
     def printGrades(self, markingPeriod : int) -> None:
         None if (self.hasGetGrades) else self.getGrades()
-        mgrades = self._grades[markingPeriod-1]
+        mgrades = self.grades[markingPeriod-1]
         for i in mgrades["Data"]:
             print("{}'s grade is {}".format(i.get("CourseName")[:(len(i.get("CourseName")))-12],i.get("Average")))
