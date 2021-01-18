@@ -16,7 +16,7 @@ Python 3.6+
 
 # Installation
 ```shell
-pip install plusportals
+pip3 install plusportals
 ```
 
 # Usage
