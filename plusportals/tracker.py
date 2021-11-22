@@ -17,7 +17,4 @@ class Tracker():
             if (newGrades != self.grades):
                 print("Grades have changed!\a\a\a")
                 self.grades = newGrades
-            for i in self.grades:
-                print("Count {}: {}'s grade is {}".format(count, i.get("CourseName")[:(len(i.get("CourseName")))-12],i.get("Average")))
-            count += 1
             time.sleep(30)
