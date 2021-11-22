@@ -17,9 +17,9 @@ class TestClient:
         cookies2 = client.session.cookies.get_dict()
         assert(cookies1 != cookies2)
     
-    def test_getGrades(self):
+    def test_fetchGrades(self):
         client = TestClient.instantiateClient(False)
-        response = client.getGrades()
+        response = client.fetchGrades()
         assert(response == [200, 200])
         assert(len(client.grades) == len(client.markingPeriods))
     
