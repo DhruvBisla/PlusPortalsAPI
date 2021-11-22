@@ -22,14 +22,14 @@ class Client(session.Session):
             Client._EMAIL = email
             Client._ID = ID
             Client._PASSWORD = password
-        if Client.hasCachedCredentials:
+        if (Client.hasCachedCredentials and password == None):
             Client._SCHOOL_NAME = credentials.getCredential('schoolName')
             Client._EMAIL = credentials.getCredential('email')
             Client._ID = credentials.getCredential('ID')
             Client._PASSWORD = credentials.getCredential('password')
         super().__init__(Client._SCHOOL_NAME, Client._EMAIL, Client._PASSWORD)
         Client.markingPeriods = self.getMarkingPeriods()
-        self.hasGetGrades : bool = False
+        self.hasFetchGrades : bool = False
         self.grades : list[dict] = []
 
     def reset(self) -> None:
@@ -41,7 +41,7 @@ class Client(session.Session):
         credentials.setCredentials(schoolName, email, ID, password)
         Client.hasCachedCredentials = True
     
-    def getGrades(self) -> requests.Response:
+    def fetchGrades(self) -> requests.Response:
         None if (Client.markingPeriods is not None) else self.getMarkingPeriods()
         specHeaders = {
             '__requestverificationtoken': '{}'.format(self.requestVerificationToken),
@@ -57,11 +57,14 @@ class Client(session.Session):
         except:
             print("Information provided was incorrect; Login was not successful.")
         self.grades = agrades
-        self.hasGetGrades = True
+        self.hasFetchGrades = True
         return responses
+    
+    def getGrades(self) -> list:
+        None if (self.hasFetchGrades) else self.fetchGrades()
+        return self.grades
 
     def printGrades(self, markingPeriod : int) -> None:
-        None if (self.hasGetGrades) else self.getGrades()
-        mgrades = self.grades[markingPeriod-1]
+        mgrades = self.getGrades[markingPeriod-1]
         for i in mgrades["Data"]:
             print("{}'s grade is {}".format(i.get("CourseName")[:(len(i.get("CourseName")))-12],i.get("Average")))

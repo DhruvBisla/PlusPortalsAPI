@@ -3,7 +3,6 @@ from lxml import html
 import json
 from typing import List
 
-from . import credentials
 from . import info
 
 class Session():
@@ -73,6 +72,6 @@ class Session():
                 markingPeriods.append(period["MarkingPeriodId"])
             markingPeriods = markingPeriods[1:]
         except Exception as error:
-            raise Exception("Invalid marking period response returned: {}".format(error))
+            raise Exception("Invalid marking period, response returned: {}".format(error))
         finally:
             return markingPeriods
