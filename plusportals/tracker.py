@@ -12,9 +12,20 @@ class Tracker():
     def track(self) -> None:
         count : int = 1
         newGrades : list
+        numbers : list = []
         while True:
+            if (count == 5):
+                self.client.reset()
+                count == 0
+            self.client.fetchGrades()
             newGrades = self.client.getGrades()[self.markingPeriod-1]["Data"]
+            for i in newGrades:
+                    numbers.append(i.get("Average"))
             if (newGrades != self.grades):
-                print("Grades have changed!\a\a\a")
+                print("\a\a\aGrades have changed: {}".format(' '.join(str(grade) for grade in numbers)))
                 self.grades = newGrades
+            else:
+                print("{}, {}: {}".format(time.strftime("%H:%M:%S", time.localtime()), count, ' '.join(str(grade) for grade in numbers)))
+            count += 1
             time.sleep(30)
+            numbers = []

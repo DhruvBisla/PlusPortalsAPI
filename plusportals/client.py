@@ -34,6 +34,8 @@ class Client(session.Session):
 
     def reset(self) -> None:
         self.session.cookies.clear()
+        self.hasGetLanding = False
+        self.hasLogin = False
         self.getDetails()
 
     @classmethod
