@@ -9,7 +9,7 @@ class Tracker():
         self.client = client.Client(False, schoolName, email, ID, password)
         self.grades = self.client.getGrades()[self.markingPeriod-1]["Data"]
     
-    def track(self) -> None:
+    def track(self, interval=30) -> None:
         count : int = 1
         newGrades : list
         numbers : list = []
@@ -27,5 +27,5 @@ class Tracker():
             else:
                 print("{}, {}: {}".format(time.strftime("%H:%M:%S", time.localtime()), count, ' '.join(str(grade) for grade in numbers)))
             count += 1
-            time.sleep(30)
+            time.sleep(interval)
             numbers = []
