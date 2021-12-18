@@ -1,10 +1,11 @@
 import time
 from typing import Optional
-
+import getpass
 from . import client
 
 class Tracker():
-    def __init__(self, markingPeriod : int, schoolName : Optional[str] = None, email : Optional[str] = None, ID : Optional[int] = None, password : Optional[str] = None):
+    def __init__(self, markingPeriod : int, schoolName : Optional[str] = None, email : Optional[str] = None, ID : Optional[int] = None):
+        password = getpass.getpass("Password: ")
         self.markingPeriod : int = markingPeriod
         self.client = client.Client(False, schoolName, email, ID, password)
         self.grades = self.client.getGrades()[self.markingPeriod-1]["Data"]
