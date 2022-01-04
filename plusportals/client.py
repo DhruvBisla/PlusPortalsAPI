@@ -67,6 +67,7 @@ class Client(session.Session):
         return self.grades
 
     def printGrades(self, markingPeriod : int) -> None:
-        mgrades = self.getGrades[markingPeriod-1]
-        for i in mgrades["Data"]:
+        None if (self.hasFetchGrades) else self.fetchGrades()
+        grades = self.grades[markingPeriod-1]
+        for i in grades["Data"]:
             print("{}'s grade is {}".format(i.get("CourseName")[:(len(i.get("CourseName")))-12],i.get("Average")))
